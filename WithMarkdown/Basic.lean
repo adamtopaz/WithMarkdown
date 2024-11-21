@@ -10,7 +10,7 @@ deriving ToJson, FromJson, Inhabited
 
 @[widget_module]
 def MarkdownViewer : Component MarkdownViewerProps where
-  javascript := include_str ".." / ".lake" / "build" / "js" / "index.js"
+  javascript := include_str ".." / "widget" / "index.js"
 
 open ProofWidgets.Jsx
 
