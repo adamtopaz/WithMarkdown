@@ -2,20 +2,10 @@ import ProofWidgets
 import Lean
 import Mathlib.Tactic
 
-open ProofWidgets Lean
-
-structure MarkdownViewerProps where
-  src : String
-deriving ToJson, FromJson, Inhabited
-
-@[widget_module]
-def MarkdownViewer : Component MarkdownViewerProps where
-  javascript := include_str ".." / "widget" / "index.js"
-
-open ProofWidgets.Jsx
+open ProofWidgets Lean ProofWidgets.Jsx
 
 def showMarkdown (src : String) (stx : Syntax) : CoreM Unit := do
-  let html : Html := <MarkdownViewer src={src}/>
+  let html : Html := <MarkdownDisplay contents={src}/>
   Widget.savePanelWidgetInfo
     (hash HtmlDisplayPanel.javascript)
     (return json% { html: $(← Server.RpcEncodable.rpcEncode html) })
