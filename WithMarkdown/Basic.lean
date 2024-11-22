@@ -52,9 +52,21 @@ def elabWithMarkdownTac : Elab.Tactic.Tactic := fun stx =>
     Elab.Tactic.evalTactic t
   | _ => Elab.throwUnsupportedSyntax
 
-
-elab "#add_markdown" id:ident s:str : command => do
+elab "#add_md" id:ident s:str : command => do
   let id := id.getId
   let uid := hash id
   let markdown := s.getString
   modifyEnv fun env => markdownEnvExt.addEntry env (uid, markdown)
+
+syntax (name := showMarkdownStx) "#md" ident : command
+
+@[command_elab showMarkdownStx]
+def elabShowMarkdown : Elab.Command.CommandElab := fun stx =>
+  match stx with
+  | `(command|#md $id:ident) => do
+    let id := id.getId
+    let uid := hash id
+    let env ← getEnv
+    if let some markdown := markdownEnvExt.getState env |>.get? uid then
+      Elab.Command.liftCoreM <| showMarkdown markdown stx
+  | _ => Elab.throwUnsupportedSyntax
